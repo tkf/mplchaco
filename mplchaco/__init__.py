@@ -94,6 +94,11 @@ class MPLChaco(HasTraits):
         cha.x_axis.title = mpl.get_xlabel()
         cha.y_axis.title = mpl.get_ylabel()
 
+        # As Chaco does not support symlog, use linear instead
+        conv_scale = lambda s: "linear" if s == "symlog" else s
+        cha.index_scale = conv_scale(mpl.get_xscale())
+        cha.value_scale = conv_scale(mpl.get_yscale())
+
 
 def mpl2chaco(fig):
     """
