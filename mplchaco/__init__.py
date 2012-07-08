@@ -22,12 +22,12 @@ class MPLChaco(HasTraits):
         fig = self._fig
         axes = fig.get_axes()
         container = GridPlotContainer(shape=(1, len(axes)))
+        pd = ArrayPlotData()
 
         for (i, ax) in enumerate(axes):
             x_name = 'x_{0}_{1}'.format
             y_name = 'y_{0}_{1}'.format
             lines = ax.get_lines()
-            pd = ArrayPlotData()
             for (j, line) in enumerate(lines):
                 pd.set_data(x_name(i, j), line.get_xdata())
                 pd.set_data(y_name(i, j), line.get_ydata())
