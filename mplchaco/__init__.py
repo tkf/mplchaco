@@ -19,6 +19,7 @@ from traits.api import HasTraits, Instance, List
 from traitsui.api import View, Item
 
 from matplotlib.colors import colorConverter
+import matplotlib.collections as mcoll
 
 
 class RelativeLocationPlotContainer(BasePlotContainer):
@@ -76,6 +77,14 @@ class MPLChaco(HasTraits):
                     li,
                 )
 
+            for (j, co) in enumerate(ax.collections):
+                self._plot_from_collection(
+                    plot,
+                    'cx_{0}_{1}'.format(i, j),
+                    'cy_{0}_{1}'.format(i, j),
+                    co,
+                )
+
             self._migrate_plot_attributes(ax, plot)
             container.add_plot(plot, ax.get_position())
 
@@ -98,6 +107,21 @@ class MPLChaco(HasTraits):
                 (xname, yname),
                 type="scatter",
                 color=colorConverter.to_rgba(line.get_markerfacecolor()))
+
+    @staticmethod
+    def _plot_from_collection(plot, xname, yname, collection):
+        """
+        Plot in Chaco Plot object `plot` given MPL Collection `collection`.
+        """
+        if isinstance(collection, mcoll.PathCollection):
+            # then assume it is the data plotted via Axes.scatter
+            ofs = collection.get_offsets()
+            plot.data.set_data(xname, ofs[:, 0])
+            plot.data.set_data(yname, ofs[:, 1])
+            plot.plot(
+                (xname, yname),
+                type="scatter",
+                color=tuple(*collection.get_facecolor()))
 
     @staticmethod
     def _migrate_plot_attributes(mpl, cha):
