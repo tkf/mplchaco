@@ -3,6 +3,8 @@ from enable.api import ComponentEditor
 from traits.api import HasTraits, Instance
 from traitsui.api import View, Item
 
+from matplotlib.colors import colorConverter
+
 
 class MPLChaco(HasTraits):
 
@@ -28,14 +30,15 @@ class MPLChaco(HasTraits):
             x_name = 'x_{0}_{1}'.format
             y_name = 'y_{0}_{1}'.format
             lines = ax.get_lines()
-            for (j, line) in enumerate(lines):
-                pd.set_data(x_name(i, j), line.get_xdata())
-                pd.set_data(y_name(i, j), line.get_ydata())
+            for (j, li) in enumerate(lines):
+                pd.set_data(x_name(i, j), li.get_xdata())
+                pd.set_data(y_name(i, j), li.get_ydata())
 
             plot = Plot(pd)
 
-            for j in range(len(lines)):
+            for (j, li) in enumerate(lines):
                 plot.plot((x_name(i, j), y_name(i, j)),
+                          color=colorConverter.to_rgba(li.get_color()),
                           line_width=3.0)
 
             container.add(plot)
