@@ -90,12 +90,13 @@ class MPLChaco(HasTraits):
                     co,
                 )
 
-            self._plot_from_patches(
-                plot,
-                'px_{0}_{{0}}'.format(i),
-                'py_{0}_{{0}}'.format(i),
-                ax.patches
-            )
+            for (j, pa) in enumerate(ax.patches):
+                self._plot_from_patch(
+                    plot,
+                    'x_{0}_{1}'.format(i, j),
+                    'y_{0}_{1}'.format(i, j),
+                    pa,
+                )
 
             self._migrate_plot_attributes(ax, plot)
             container.add_plot(plot, ax.get_position())
@@ -136,48 +137,34 @@ class MPLChaco(HasTraits):
                 color=tuple(*collection.get_facecolor()))
 
     @staticmethod
-    def _plot_from_patches(plot, xfmt, yfmt, patches):
+    def _plot_from_patch(plot, xname, yname, patch):
         """
-        Plot in Chaco Plot object `plot` given MPL Patch list `patches`.
+        Plot in Chaco Plot object `plot` given MPL Patch `patche`.
         """
 
-        def rect2data(r):
-            return [r.get_x(), r.get_y() + r.get_height()]
+        is_data_set = True
+        if isinstance(patch, mpatches.Rectangle):
+            x = patch.get_x()
+            y = patch.get_y()
+            w = patch.get_width()
+            h = patch.get_height()
+            xdata = [x, x, x + w, x + w]
+            ydata = [y, y + h, y + h, y]
+            plot.data.set_data(xname, xdata)
+            plot.data.set_data(yname, ydata)
+        elif isinstance(patch, mpatches.Polygon):
+            xy = patch.get_xy()
+            plot.data.set_data(xname, xy[:, 0])
+            plot.data.set_data(yname, xy[:, 1])
+        else:
+            is_data_set = False
 
-        def genename(fmt):
-            def name():
-                j = 0
-                while True:
-                    yield fmt.format(j)
-                    j += 1
-            return name().next
-
-        getxname = genename(xfmt)
-        getyname = genename(yfmt)
-
-        for (cls, group) in itertools.groupby(patches, type):
-            if cls is mpatches.Rectangle:
-                xname = getxname()
-                yname = getyname()
-                group = list(group)
-                data = numpy.array(map(rect2data, group))
-                plot.data.set_data(xname, data[:, 0])
-                plot.data.set_data(yname, data[:, 1])
-                plot.plot(
-                    (xname, yname),
-                    renderstyle='connectedhold',
-                    color=group[0].get_facecolor())
-            elif cls is mpatches.Polygon:
-                for pol in group:
-                    xname = getxname()
-                    yname = getyname()
-                    xy = pol.get_xy()
-                    plot.data.set_data(xname, xy[:, 0])
-                    plot.data.set_data(yname, xy[:, 1])
-                    plot.plot(
-                        (xname, yname),
-                        type="polygon",
-                        color=pol.get_edgecolor())
+        if is_data_set:
+            plot.plot(
+                (xname, yname),
+                type="polygon",
+                face_color=patch.get_facecolor(),
+                edge_color=patch.get_edgecolor())
 
     @staticmethod
     def _migrate_plot_attributes(mpl, cha):
