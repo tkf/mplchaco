@@ -66,9 +66,19 @@ class MPLChaco(HasTraits):
                           color=colorConverter.to_rgba(li.get_color()),
                           line_width=3.0)
 
+            self._migrate_plot_attributes(ax, plot)
             container.add_plot(plot, ax.get_position())
 
         return container
+
+    @staticmethod
+    def _migrate_plot_attributes(mpl, cha):
+        """
+        Copy argument of MPL Axes `mpl` to Chaco Plot `cha`.
+        """
+        cha.title = mpl.get_title()
+        cha.x_axis.title = mpl.get_xlabel()
+        cha.y_axis.title = mpl.get_ylabel()
 
 
 def mpl2chaco(fig):
