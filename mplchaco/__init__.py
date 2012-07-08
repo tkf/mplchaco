@@ -69,19 +69,35 @@ class MPLChaco(HasTraits):
             plot = Plot(pd)
 
             for (j, li) in enumerate(ax.get_lines()):
-                x_name = 'x_{0}_{1}'.format(i, j)
-                y_name = 'y_{0}_{1}'.format(i, j)
-                pd.set_data(x_name, li.get_xdata())
-                pd.set_data(y_name, li.get_ydata())
-
-                plot.plot((x_name, y_name),
-                          color=colorConverter.to_rgba(li.get_color()),
-                          line_width=3.0)
+                self._plot_from_line(
+                    plot,
+                    'x_{0}_{1}'.format(i, j),
+                    'y_{0}_{1}'.format(i, j),
+                    li,
+                )
 
             self._migrate_plot_attributes(ax, plot)
             container.add_plot(plot, ax.get_position())
 
         return container
+
+    @staticmethod
+    def _plot_from_line(plot, xname, yname, line):
+        """
+        Plot lines in Chaco Plot object `plot` given MPL Line2D `line`.
+        """
+        plot.data.set_data(xname, line.get_xdata())
+        plot.data.set_data(yname, line.get_ydata())
+
+        if line.get_linestyle() != "None":
+            plot.plot(
+                (xname, yname),
+                color=colorConverter.to_rgba(line.get_color()))
+        if line.get_marker() != "None":
+            plot.plot(
+                (xname, yname),
+                type="scatter",
+                color=colorConverter.to_rgba(line.get_markerfacecolor()))
 
     @staticmethod
     def _migrate_plot_attributes(mpl, cha):
