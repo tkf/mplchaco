@@ -66,17 +66,15 @@ class MPLChaco(HasTraits):
         pd = ArrayPlotData()
 
         for (i, ax) in enumerate(axes):
-            x_name = 'x_{0}_{1}'.format
-            y_name = 'y_{0}_{1}'.format
-            lines = ax.get_lines()
-            for (j, li) in enumerate(lines):
-                pd.set_data(x_name(i, j), li.get_xdata())
-                pd.set_data(y_name(i, j), li.get_ydata())
-
             plot = Plot(pd)
 
-            for (j, li) in enumerate(lines):
-                plot.plot((x_name(i, j), y_name(i, j)),
+            for (j, li) in enumerate(ax.get_lines()):
+                x_name = 'x_{0}_{1}'.format(i, j)
+                y_name = 'y_{0}_{1}'.format(i, j)
+                pd.set_data(x_name, li.get_xdata())
+                pd.set_data(y_name, li.get_ydata())
+
+                plot.plot((x_name, y_name),
                           color=colorConverter.to_rgba(li.get_color()),
                           line_width=3.0)
 
