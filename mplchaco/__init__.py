@@ -1,14 +1,39 @@
-from chaco.api import ArrayPlotData, Plot, GridPlotContainer
+from chaco.api import ArrayPlotData, Plot
+from chaco.base_plot_container import BasePlotContainer
 from enable.api import ComponentEditor
-from traits.api import HasTraits, Instance
+from traits.api import HasTraits, Instance, List
 from traitsui.api import View, Item
 
 from matplotlib.colors import colorConverter
 
 
+class RelativeLocationPlotContainer(BasePlotContainer):
+
+    """
+    Container class using MPL's bbox to locate plots.
+    """
+
+    boxes = List(value=[])
+
+    def add_plot(self, plot, box):
+        self.add(plot)
+        self.boxes.append(box)
+
+    def _do_layout(self):
+        # See also: `chaco.api.GridPlotContainer._do_layout`
+        (width, height) = self.bounds
+        for (plot, box) in zip(self.components, self.boxes):
+            # `box` already considers spacing.
+            # So, do not use `outer_*` here.
+            plot.position = [box.x0 * width, box.y0 * height]
+            plot.width = (box.x1 - box.x0) * width
+            plot.height = (box.y1 - box.y0) * height
+            plot.do_layout()
+
+
 class MPLChaco(HasTraits):
 
-    plot = Instance(GridPlotContainer)
+    plot = Instance(RelativeLocationPlotContainer)
 
     traits_view = View(
         Item('plot', editor=ComponentEditor(), show_label=False),
@@ -23,7 +48,7 @@ class MPLChaco(HasTraits):
     def _plot_default(self):
         fig = self._fig
         axes = fig.get_axes()
-        container = GridPlotContainer(shape=(1, len(axes)))
+        container = RelativeLocationPlotContainer()
         pd = ArrayPlotData()
 
         for (i, ax) in enumerate(axes):
@@ -41,7 +66,7 @@ class MPLChaco(HasTraits):
                           color=colorConverter.to_rgba(li.get_color()),
                           line_width=3.0)
 
-            container.add(plot)
+            container.add_plot(plot, ax.get_position())
 
         return container
 
