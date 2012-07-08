@@ -12,10 +12,6 @@ blocks IPython.
 
 """
 
-import itertools
-
-import numpy
-
 from chaco.api import ArrayPlotData, Plot
 from chaco.base_plot_container import BasePlotContainer
 from enable.api import ComponentEditor
