@@ -88,7 +88,7 @@ class MPLChaco(HasTraits):
     @staticmethod
     def _migrate_plot_attributes(mpl, cha):
         """
-        Copy argument of MPL Axes `mpl` to Chaco Plot `cha`.
+        Copy attributes of MPL Axes `mpl` to Chaco Plot `cha`.
         """
         cha.title = mpl.get_title()
         cha.x_axis.title = mpl.get_xlabel()
