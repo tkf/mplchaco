@@ -1,3 +1,17 @@
+"""
+Matplotlib to Chaco converter.
+
+Usage::
+
+    from mplchaco import mpl2chaco
+    mpl2chaco(fig).configure_traits()
+
+Note that when using from IPython, make sure execute ``%gui wx``
+**before** importing `mplchaco`.  Otherwise, opening Chaco window
+blocks IPython.
+
+"""
+
 from chaco.api import ArrayPlotData, Plot
 from chaco.base_plot_container import BasePlotContainer
 from enable.api import ComponentEditor
@@ -84,11 +98,5 @@ class MPLChaco(HasTraits):
 def mpl2chaco(fig):
     """
     Convert a MPL figure object to Chaco figure instance
-
-    Typical usage is calling ``.configure_traits()`` right after
-    making the instance::
-
-        mpl2chaco(fig).configure_traits()
-
     """
     return MPLChaco(fig)
