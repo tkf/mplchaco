@@ -95,32 +95,18 @@ class MPLChaco(HasTraits):
         container = RelativeLocationPlotContainer()
         pd = ArrayPlotData()
 
+        def do_plot(plot, func, prefix, i, sources):
+            for (j, src) in enumerate(sources):
+                xname = "{0}x_{1}_{2}".format(prefix, i, j)
+                yname = "{0}y_{1}_{2}".format(prefix, i, j)
+                func(plot, xname, yname, src)
+
         for (i, ax) in enumerate(axes):
             plot = Plot(pd)
 
-            for (j, li) in enumerate(ax.get_lines()):
-                self._plot_from_line(
-                    plot,
-                    'lx_{0}_{1}'.format(i, j),
-                    'ly_{0}_{1}'.format(i, j),
-                    li,
-                )
-
-            for (j, co) in enumerate(ax.collections):
-                self._plot_from_collection(
-                    plot,
-                    'cx_{0}_{1}'.format(i, j),
-                    'cy_{0}_{1}'.format(i, j),
-                    co,
-                )
-
-            for (j, pa) in enumerate(ax.patches):
-                self._plot_from_patch(
-                    plot,
-                    'px_{0}_{1}'.format(i, j),
-                    'py_{0}_{1}'.format(i, j),
-                    pa,
-                )
+            do_plot(plot, self._plot_from_line,       "l", i, ax.get_lines())
+            do_plot(plot, self._plot_from_collection, "c", i, ax.collections)
+            do_plot(plot, self._plot_from_patch,      "p", i, ax.patches)
 
             self._migrate_plot_attributes(ax, plot)
             self._setup_plot_tools(plot)
