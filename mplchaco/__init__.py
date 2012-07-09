@@ -14,6 +14,7 @@ blocks IPython.
 
 from chaco.api import ArrayPlotData, Plot
 from chaco.base_plot_container import BasePlotContainer
+from chaco.shell.plot_maker import marker_trans
 from enable.api import ComponentEditor
 from traits.api import HasTraits, Instance, List
 from traitsui.api import View, Item
@@ -126,10 +127,18 @@ class MPLChaco(HasTraits):
             plot.plot(
                 (xname, yname),
                 color=colorConverter.to_rgba(line.get_color()))
-        if line.get_marker() != "None":
+
+        marker = line.get_marker()
+        if marker != "None":
+            chaco_marker = marker_trans.get(marker, "circle")
+            if chaco_marker == 'down triangle':
+                # Workaround the bug in Chaco shell.
+                # (https://github.com/enthought/chaco/issues/70)
+                chaco_marker = 'inverted_triangle'
             plot.plot(
                 (xname, yname),
                 type="scatter",
+                marker=chaco_marker,
                 color=colorConverter.to_rgba(line.get_markerfacecolor()))
 
     @staticmethod
