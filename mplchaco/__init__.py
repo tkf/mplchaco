@@ -73,8 +73,8 @@ class MPLChaco(HasTraits):
             for (j, li) in enumerate(ax.get_lines()):
                 self._plot_from_line(
                     plot,
-                    'x_{0}_{1}'.format(i, j),
-                    'y_{0}_{1}'.format(i, j),
+                    'lx_{0}_{1}'.format(i, j),
+                    'ly_{0}_{1}'.format(i, j),
                     li,
                 )
 
@@ -89,8 +89,8 @@ class MPLChaco(HasTraits):
             for (j, pa) in enumerate(ax.patches):
                 self._plot_from_patch(
                     plot,
-                    'x_{0}_{1}'.format(i, j),
-                    'y_{0}_{1}'.format(i, j),
+                    'px_{0}_{1}'.format(i, j),
+                    'py_{0}_{1}'.format(i, j),
                     pa,
                 )
 
