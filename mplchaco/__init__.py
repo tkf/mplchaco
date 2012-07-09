@@ -96,18 +96,17 @@ class MPLChaco(HasTraits):
         container = RelativeLocationPlotContainer()
         pd = ArrayPlotData()
 
-        def do_plot(plot, func, prefix, i, sources):
+        def do_plot(plot, func, i, sources):
             for (j, src) in enumerate(sources):
-                xname = "{0}x_{1}_{2}".format(prefix, i, j)
-                yname = "{0}y_{1}_{2}".format(prefix, i, j)
-                func(plot, xname, yname, src)
+                suffix = "{0}_{1}".format(i, j)
+                func(plot, suffix, src)
 
         for (i, ax) in enumerate(axes):
             plot = Plot(pd)
 
-            do_plot(plot, self._plot_from_line,       "l", i, ax.get_lines())
-            do_plot(plot, self._plot_from_collection, "c", i, ax.collections)
-            do_plot(plot, self._plot_from_patch,      "p", i, ax.patches)
+            do_plot(plot, self._plot_from_line,       i, ax.get_lines())
+            do_plot(plot, self._plot_from_collection, i, ax.collections)
+            do_plot(plot, self._plot_from_patch,      i, ax.patches)
 
             self._migrate_plot_attributes(ax, plot)
             self._setup_plot_tools(plot)
@@ -116,10 +115,12 @@ class MPLChaco(HasTraits):
         return container
 
     @staticmethod
-    def _plot_from_line(plot, xname, yname, line):
+    def _plot_from_line(plot, suffix, line):
         """
         Plot lines in Chaco Plot object `plot` given MPL Line2D `line`.
         """
+        xname = "lx_{0}".format(suffix)
+        yname = "ly_{0}".format(suffix)
         plot.data.set_data(xname, line.get_xdata())
         plot.data.set_data(yname, line.get_ydata())
 
@@ -144,10 +145,12 @@ class MPLChaco(HasTraits):
                 color=colorConverter.to_rgba(line.get_markerfacecolor()))
 
     @staticmethod
-    def _plot_from_collection(plot, xname, yname, collection):
+    def _plot_from_collection(plot, suffix, collection):
         """
         Plot in Chaco Plot object `plot` given MPL Collection `collection`.
         """
+        xname = "cx_{0}".format(suffix)
+        yname = "cy_{0}".format(suffix)
         if isinstance(collection, mcoll.PathCollection):
             # then assume it is the data plotted via Axes.scatter
             ofs = collection.get_offsets()
@@ -165,10 +168,12 @@ class MPLChaco(HasTraits):
             # path.
 
     @staticmethod
-    def _plot_from_patch(plot, xname, yname, patch):
+    def _plot_from_patch(plot, suffix, patch):
         """
         Plot in Chaco Plot object `plot` given MPL Patch `patche`.
         """
+        xname = "px_{0}".format(suffix)
+        yname = "py_{0}".format(suffix)
 
         is_data_set = True
         if isinstance(patch, mpatches.Rectangle):
