@@ -25,6 +25,10 @@ from matplotlib.colors import colorConverter
 import matplotlib.collections as mcoll
 import matplotlib.patches as mpatches
 
+__author__ = "Takafumi Arakaki"
+__version__ = "0.1.dev0"
+__license__ = "MIT License"
+
 
 class RelativeLocationPlotContainer(BasePlotContainer):
 
