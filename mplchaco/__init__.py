@@ -14,7 +14,7 @@ blocks IPython.
 
 from chaco.api import ArrayPlotData, Plot
 from chaco.base_plot_container import BasePlotContainer
-from chaco.shell.plot_maker import marker_trans
+from chaco.shell.plot_maker import marker_trans, line_trans
 from enable.api import ComponentEditor
 from traits.api import HasTraits, Instance, List
 from traitsui.api import View, Item
@@ -123,9 +123,11 @@ class MPLChaco(HasTraits):
         plot.data.set_data(xname, line.get_xdata())
         plot.data.set_data(yname, line.get_ydata())
 
-        if line.get_linestyle() != "None":
+        ls = line.get_linestyle()
+        if ls != "None":
             plot.plot(
                 (xname, yname),
+                line_style=line_trans.get(ls, "solid"),
                 color=colorConverter.to_rgba(line.get_color()))
 
         marker = line.get_marker()
