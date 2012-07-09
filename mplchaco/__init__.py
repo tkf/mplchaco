@@ -15,6 +15,7 @@ blocks IPython.
 from chaco.api import ArrayPlotData, Plot
 from chaco.base_plot_container import BasePlotContainer
 from chaco.shell.plot_maker import marker_trans, line_trans
+from chaco.default_colormaps import color_map_name_dict
 from enable.api import ComponentEditor
 from traits.api import HasTraits, Instance, List
 from traitsui.api import View, Item
@@ -151,15 +152,27 @@ class MPLChaco(HasTraits):
         """
         xname = "cx_{0}".format(suffix)
         yname = "cy_{0}".format(suffix)
+        cname = "cc_{0}".format(suffix)
         if isinstance(collection, mcoll.PathCollection):
             # then assume it is the data plotted via Axes.scatter
             ofs = collection.get_offsets()
             plot.data.set_data(xname, ofs[:, 0])
             plot.data.set_data(yname, ofs[:, 1])
-            plot.plot(
-                (xname, yname),
-                type="scatter",
-                color=tuple(*collection.get_facecolor()))
+            colarr = collection.get_array()
+            if colarr is not None:
+                plot.data.set_data(cname, colarr)
+                cmap = collection.get_cmap()
+                color_mapper = color_map_name_dict.get(
+                    cmap.name, color_map_name_dict["jet"])
+                plot.plot(
+                    (xname, yname, cname),
+                    type="cmap_scatter",
+                    color_mapper=color_mapper)
+            else:
+                plot.plot(
+                    (xname, yname),
+                    type="scatter",
+                    color=tuple(*collection.get_facecolor()))
             # FIXME: treat marker type
 
             # Note: marker type cannot be retrieved now because it is
