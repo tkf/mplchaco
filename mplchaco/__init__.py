@@ -168,6 +168,11 @@ class MPLChaco(HasTraits):
                     (xname, yname, cname),
                     type="cmap_scatter",
                     color_mapper=color_mapper)
+                # Note: I think this can result in different dot
+                # colors because I don't know the color mapper works
+                # in the same way in MPL and Chaco.  Right way to do
+                # it is to use ``get_facecolor()`` directly, but I
+                # could not find the way to directly set dot colors.
             else:
                 plot.plot(
                     (xname, yname),
