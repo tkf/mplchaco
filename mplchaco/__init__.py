@@ -157,6 +157,12 @@ class MPLChaco(HasTraits):
                 (xname, yname),
                 type="scatter",
                 color=tuple(*collection.get_facecolor()))
+            # FIXME: treat marker type
+
+            # Note: marker type cannot be retrieved now because it is
+            # already converted into a path.  A right way to do it is
+            # to generate something like a custom marker based on the
+            # path.
 
     @staticmethod
     def _plot_from_patch(plot, xname, yname, patch):
