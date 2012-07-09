@@ -31,8 +31,23 @@ class RelativeLocationPlotContainer(BasePlotContainer):
     """
 
     boxes = List(value=[])
+    """
+    A list of `matplotlib.transforms.Bbox`.
+    """
 
     def add_plot(self, plot, box):
+        """
+        Add a plot and its location information to this container.
+
+        Parameters
+        ----------
+
+        plot : chaco.api.Plot
+            Chaco plot object.
+        box : matplotlib.transforms.Bbox
+            Use ``ax.get_position()`` to get this value.
+
+        """
         self.add(plot)
         self.boxes.append(box)
 
@@ -63,6 +78,18 @@ class MPLChaco(HasTraits):
         self._fig = fig
 
     def _plot_default(self):
+        """
+        Initialize `self.plot`.
+
+        Traits package magically sets `self.plot` to the returned
+        value of this function.
+
+        See also:
+
+        * http://docs.enthought.com/traits/traits_user_manual/advanced.html
+          #dynamic-initialization
+
+        """
         fig = self._fig
         axes = fig.get_axes()
         container = RelativeLocationPlotContainer()
