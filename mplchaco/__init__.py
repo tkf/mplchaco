@@ -17,6 +17,7 @@ from chaco.base_plot_container import BasePlotContainer
 from enable.api import ComponentEditor
 from traits.api import HasTraits, Instance, List
 from traitsui.api import View, Item
+from chaco.tools.api import PanTool, ZoomTool
 
 from matplotlib.colors import colorConverter
 import matplotlib.collections as mcoll
@@ -95,6 +96,7 @@ class MPLChaco(HasTraits):
                 )
 
             self._migrate_plot_attributes(ax, plot)
+            self._setup_plot_tools(plot)
             container.add_plot(plot, ax.get_position())
 
         return container
@@ -175,6 +177,12 @@ class MPLChaco(HasTraits):
         conv_scale = lambda s: "linear" if s == "symlog" else s
         cha.index_scale = conv_scale(mpl.get_xscale())
         cha.value_scale = conv_scale(mpl.get_yscale())
+
+    @staticmethod
+    def _setup_plot_tools(plot):
+        plot.tools.append(PanTool(plot))
+        zoom = ZoomTool(plot)
+        plot.overlays.append(zoom)
 
 
 def mpl2chaco(fig):
