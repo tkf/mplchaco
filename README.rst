@@ -11,6 +11,7 @@ Note that when using from IPython, make sure execute ``%gui wx``
 **before** importing `mplchaco`.  Otherwise, opening Chaco window
 blocks IPython.
 
+See [demo](https://github.com/tkf/mplchaco/wiki/Demo).
 
 Why?
 ====
